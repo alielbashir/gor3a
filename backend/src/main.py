@@ -45,8 +45,8 @@ async def get_giftswap(id: int, gifter: str):
     can only be accessed once
     """
     # get the gift swap from the database
-    try:
-        if receiver := DB[id][gifter] is None:
+    try:    
+        if (receiver := DB[id][gifter]) is None:
             raise HTTPException(
                 status_code=403, detail="This gifter has already viewed their receiver"
             )
