@@ -8,6 +8,7 @@ authors = ["Ali Elbashir <alielbashiir@gmail.com>"]
 python = "^3.10"
 fastapi = "^0.75.2"
 uvicorn = "^0.17.6"
+Jinja2 = "^3.1.1"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}

@@ -58,6 +58,8 @@ module.exports = {
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   appIndexJs: resolveModule(resolveApp, 'src/index'),
+  appGor3aHtml: resolveApp('public/gor3a.html'),
+  appGor3aIndexJs: resolveModule(resolveApp, 'src/gor3a/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),

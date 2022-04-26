@@ -1,11 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 from src.core import generate_pairs
 
 URL = "http://localhost:8000"
 
 app = FastAPI()
 
+templates = Jinja2Templates(directory="src/templates")
 
 # A list of gor3as from different users with int id as key
 DB: dict[int, dict[str, str]] = {}
@@ -36,8 +39,8 @@ async def create_gor3a(people: list[str]):
     return {"id": id}
 
 
-@app.get("/gor3a/{id}/{gifter}", status_code=200)
-async def get_gor3a_receiver(id: int, gifter: str):
+@app.get("/gor3a/{id}/{gifter}", response_class=HTMLResponse)
+async def get_gor3a_receiver(request: Request, id: int, gifter: str):
     """
     Takes a gor3a ID and a gifter's name
     returns the receiver's name,
@@ -59,8 +62,14 @@ async def get_gor3a_receiver(id: int, gifter: str):
         raise HTTPException(status_code=404, detail="gor3a not found")
 
     # return the receiver's name
-    return {"receiver": receiver_name}
-
+    return templates.TemplateResponse(
+        "receiver.html",
+        {
+            "request": request,
+            "gifter_name": gifter,
+            "receiver_name": receiver_name,
+        },
+    )
 
 @app.get("/gor3a/{id}", status_code=200)
 async def get_gor3a(id: int):
@@ -77,7 +86,11 @@ async def get_gor3a(id: int):
         if (gor3a := DB[id]) is None:
             raise HTTPException(status_code=403, detail="This gor3a doesn't exist")
         urls = [
-            {"name": gifter, "url": f"{URL}/gor3a/{id}/{gifter}", "viewed": DB[id][gifter].viewed}
+            {
+                "name": gifter,
+                "url": f"{URL}/gor3a/{id}/{gifter}",
+                "viewed": DB[id][gifter].viewed,
+            }
             for gifter in gor3a
         ]
     except KeyError:
