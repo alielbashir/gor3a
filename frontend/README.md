@@ -1,46 +1,108 @@
-# Getting Started with Create React App
+# Step 2.2 - UI Fabric component library (Demo)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[Lessons](../../) | [Exercise](../exercise/)
 
-## Available Scripts
+[UI Fabric](https://developer.microsoft.com/en-us/fabric) is a component library that reflects the latest Microsoft design language. It is used in many Microsoft web applications and is [developed in the open](https://github.com/OfficeDev/office-ui-fabric-react).
 
-In the project directory, you can run:
+We'll talk about:
 
-### `yarn start`
+- [What makes it good](#what-makes-it-good)
+- [How to find it](#how-to-find-it)
+- [How to use it](#how-to-use-it)
+- [Laying out apps with Stack](#layout-with-stack)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## What makes it good
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Fabric has been developed BOTH by developers and design engineers working together as a team
+- Most notable Microsoft web products use it
+- It is documented both with examples and TypeScript API documentation
+- Components are highly customizable and themeable
+- Comprehensive library
+- Works with assistive technologies and conforms to web accessibility standards for focus management
+- Fully funded and well managed - shield rotation and lots of automation work
+- Engineering is done in the open on GitHub
+- Engineering system is shared and re-usable by other teams
 
-### `yarn test`
+## How to find it
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+GitHub repo:
+https://github.com/officedev/office-ui-fabric-react
 
-### `yarn build`
+Documentation:
+https://developer.microsoft.com/en-us/fabric/#/components
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## How to use it
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Importing a component
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```jsx
+import { DefaultButton } from 'office-ui-fabric-react';
 
-### `yarn eject`
+const MyComponent = () => {
+  return (
+    <div>
+      <DefaultButton>Hello World</DefaultButton>
+    </div>
+  );
+};
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Customizing behavior of individual components
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Take a look at the [Button documentation](https://developer.microsoft.com/en-us/fabric#/components/button).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+From the documentation, we can see that if we want to render an icon along with the button's text, we can pass `iconProps` to the button:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```js
+import { DefaultButton } from 'office-ui-fabric-react';
 
-## Learn More
+const MyComponent = () => {
+  return (
+    <div>
+      <DefaultButton iconProps={{ iconName: 'Mail' }}>Send Mail</DefaultButton>
+    </div>
+  );
+};
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Customizing component rendering
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Some Fabric components take in a render functions to allow customizing certain parts of the component. An example with TextField:
+
+```js
+import { TextField } from 'office-ui-fabric-react';
+
+const MyComponent = () => {
+  return (
+    <div>
+      <TextField onRenderPrefix={() => <Icon iconName="Search" />} />
+      <TextField onRenderPrefix={() => 'hello world'} />
+    </div>
+  );
+};
+```
+
+## Layout with Stack
+
+Before we start, let's look at flexbox--a modern CSS layout method which is powerful, but really, really complex to use:
+
+- A guide: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+- A tool: http://the-echoplex.net/flexyboxes/
+- Did you know there were three or so flexbox standards? (this means old articles may have non-working code)
+
+Fabric's answer is: Stack.
+
+**Stack** is a container-type component that abstracts the usage of flexbox to define the layout of its child components.
+
+Flexbox uses CSS styles to control:
+
+- direction
+- grow
+- shrink
+- wrap
+- justification
+- alignment
+
+Stack abstracts these CSS styles and provides typings to make them more discoverable.
+
+Check out a cookbook of sorts in our [documentation](https://developer.microsoft.com/en-us/fabric#/components/stack).

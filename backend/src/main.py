@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.core import generate_pairs
 
+URL = "http://localhost:8000"
 
 app = FastAPI()
 
 
-# A list of giftswaps from different users with int id as key
+# A list of gor3as from different users with int id as key
 DB: dict[int, dict[str, str]] = {}
 
 
@@ -19,12 +20,12 @@ app.add_middleware(
 )
 
 
-@app.post("/giftswap", status_code=201)
-async def create_giftswap(people: list[str]):
+@app.post("/gor3a", status_code=201)
+async def create_gor3a(people: list[str]):
     """
     Takes a list of participants' names
-    adds users to the giftswap
-    returns giftswap ID
+    adds users to the gor3a
+    returns gor3a ID
     """
     # generate a unique id for the gift swap
     id = len(DB)
@@ -35,24 +36,46 @@ async def create_giftswap(people: list[str]):
     return {"id": id}
 
 
-@app.get("/giftswap/{id}/{gifter}", status_code=200)
-async def get_giftswap(id: int, gifter: str):
+@app.get("/gor3a/{id}/{gifter}", status_code=200)
+async def get_gor3a_receiver(id: int, gifter: str):
     """
-    Takes a giftswap ID and a gifter's name
+    Takes a gor3a ID and a gifter's name
     returns the receiver's name,
     or 404 if the gift swap doesn't exist
 
     can only be accessed once
     """
     # get the gift swap from the database
-    try:    
+    try:
         if (receiver := DB[id][gifter]) is None:
             raise HTTPException(
                 status_code=403, detail="This gifter has already viewed their receiver"
             )
         DB[id][gifter] = None
     except KeyError:
-        raise HTTPException(status_code=404, detail="GiftSwap not found")
+        raise HTTPException(status_code=404, detail="gor3a not found")
 
     # return the receiver's name
     return {"receiver": receiver}
+
+
+@app.get("/gor3a/{id}", status_code=200)
+async def get_gor3a(id: int):
+    """
+    Takes a gor3a ID
+    returns the receiver's URLS,
+    or 404 if the gift swap doesn't exist
+    can only be accessed once
+    """
+
+    urls = []
+
+    try:
+        if (gor3a := DB[id]) is None:
+            raise HTTPException(status_code=403, detail="This gor3a doesn't exist")
+        urls = {gifter: f"{URL}/gor3a/{id}/{gifter}" for gifter in gor3a}
+    except KeyError:
+        raise HTTPException(status_code=404, detail="gor3a not found")
+
+    # return the receiver's name
+    return {"urls": urls}
