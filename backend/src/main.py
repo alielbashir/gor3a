@@ -47,16 +47,19 @@ async def get_gor3a_receiver(id: int, gifter: str):
     """
     # get the gift swap from the database
     try:
-        if (receiver := DB[id][gifter]) is None:
+        receiver = DB[id][gifter]
+        receiver_name = receiver.name
+        if receiver.viewed:
             raise HTTPException(
                 status_code=403, detail="This gifter has already viewed their receiver"
             )
-        DB[id][gifter] = None
+        DB[id][gifter].viewed = True
+        DB[id][gifter].name = None
     except KeyError:
         raise HTTPException(status_code=404, detail="gor3a not found")
 
     # return the receiver's name
-    return {"receiver": receiver}
+    return {"receiver": receiver_name}
 
 
 @app.get("/gor3a/{id}", status_code=200)
@@ -73,7 +76,10 @@ async def get_gor3a(id: int):
     try:
         if (gor3a := DB[id]) is None:
             raise HTTPException(status_code=403, detail="This gor3a doesn't exist")
-        urls = {gifter: f"{URL}/gor3a/{id}/{gifter}" for gifter in gor3a}
+        urls = [
+            {"name": gifter, "url": f"{URL}/gor3a/{id}/{gifter}", "viewed": DB[id][gifter].viewed}
+            for gifter in gor3a
+        ]
     except KeyError:
         raise HTTPException(status_code=404, detail="gor3a not found")
 
