@@ -1,6 +1,7 @@
 import random
 from collections import deque
-
+import logging
+from fastapi.logger import logger
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -8,6 +9,11 @@ from fastapi.templating import Jinja2Templates
 
 
 URL = "https://gor3a-backend.azurewebsites.net"
+
+
+gunicorn_logger = logging.getLogger('gunicorn.error')
+logger.handlers = gunicorn_logger.handlers
+logger.setLevel(gunicorn_logger.level)
 
 app = FastAPI()
 
