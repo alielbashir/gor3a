@@ -1,14 +1,18 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
-from src.core import generate_pairs
+import random
+from collections import deque
 
-URL = "http://localhost:8000"
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
+from core import generate_pairs
+
+URL = "https://gor3a-backend.azurewebsites.net"
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="src/templates")
+templates = Jinja2Templates(directory="./templates")
 
 # A list of gor3as from different users with int id as key
 DB: dict[int, dict[str, str]] = {}
@@ -21,6 +25,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class Receiver:
+    def __init__(self, name: str):
+        self.name = name
+        self.viewed = False
+
+
+def generate_pairs(gifters: list[str]) -> dict[str, str]:
+    """ "
+    Randomly generates a dict of gifters and receivers for the gift swap
+    """
+    random.shuffle(gifters)
+    receivers = deque(gifters)
+    receivers.rotate()
+    return dict(zip(gifters, [Receiver(receiver) for receiver in receivers]))
 
 
 @app.post("/gor3a", status_code=201)
@@ -70,6 +90,7 @@ async def get_gor3a_receiver(request: Request, id: int, gifter: str):
             "receiver_name": receiver_name,
         },
     )
+
 
 @app.get("/gor3a/{id}", status_code=200)
 async def get_gor3a(id: int):
