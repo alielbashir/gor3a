@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from core import generate_pairs
 
 URL = "https://gor3a-backend.azurewebsites.net"
 
