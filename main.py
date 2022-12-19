@@ -45,7 +45,11 @@ def generate_pairs(gifters: list[str]) -> dict[str, str]:
     random.shuffle(gifters)
     receivers = deque(gifters)
     receivers.rotate()
-    return dict(zip(gifters, [Receiver(receiver) for receiver in receivers]))
+
+    pairs = list(dict(zip(gifters, [Receiver(receiver) for receiver in receivers])).items())
+    random.shuffle(pairs)
+    
+    return dict(pairs)
 
 
 @app.post("/gor3a", status_code=201)
